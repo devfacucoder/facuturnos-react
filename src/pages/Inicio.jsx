@@ -1,30 +1,25 @@
-import React from "react";
-import ListaTurnos from "../components/ListaTurnos";
+import React from 'react';
+import {Link} from 'react-router-dom';
+
 function Inicio() {
-  return (
-    <div className="w-full">
-      <div className="w-full bg-red-400 h-30">
-        <img
-          className="w-full h-full object-cover object-top"
-          src="/imagenes/portada-inicio.jpeg"
-          alt=""
-        />
-      </div>
-      <div>
-        <h3 className="text-center text-2xl font-mono">Pedir Turno</h3>
-      </div>
-      <div className="w-full bg-blue-700 overflow-x-hidden">
+    return (
         <div>
-          <h3>
-          Turnos disponibles
-          </h3>
-          <p>
-          </p>
+            <ul>
+                <li> 
+                    <Link to="/login">
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Ingresar
+                        </button>
+                    </Link>
+                </li>
+                <li>
+                    <Link to="/ListaMedicos">
+                        Pedir Turno
+                    </Link>
+                </li>
+            </ul>
         </div>
-        <ListaTurnos />
-      </div>
-    </div>
-  );
+    );
 }
 
 export default Inicio;
