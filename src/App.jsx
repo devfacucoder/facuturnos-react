@@ -11,6 +11,7 @@ import ListaMedicos from "./pages/ListaMedicos";
 import PedirTurno from "./pages/PedirTurno";
 import Login from "./pages/Login";
 import PanelSecretario from "./pages/PanelSecretario";
+import PanelAdmin from "./pages/PanelAdmin";
 function App() {
   return (
     <div className="bg-white min-h-svh w-screen ">
@@ -22,6 +23,7 @@ function App() {
           <Route path="/pedir/:idMedico" element={<PedirTurno />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/secretario" element={<PanelSecretario />} />
+          <Route path="/paneladmin" element={<PanelAdmin />} />
         </Routes>
       </main>
     </div>

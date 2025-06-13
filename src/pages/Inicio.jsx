@@ -17,6 +17,11 @@ function Inicio() {
                         Pedir Turno
                     </Link>
                 </li>
+                <li>
+                    <Link to="/paneladmin">
+                        Panel Admin
+                    </Link>
+                </li>
             </ul>
         </div>
     );

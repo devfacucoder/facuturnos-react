@@ -57,11 +57,11 @@ function ModalEdit({
   return (
     <>
       <div className="bg-black opacity-75 left-0 bottom-0 fixed z-40 w-screen h-screen"></div>
-      <div className="bg-white absolute top-0 left-0 right-0 bottom-0 z-60 m-auto  h-72 w-5/6 ">
+      <div className="bg-white absolute top-0 left-0 right-0 bottom-0 z-60 m-auto  h-72 w-5/6 sm:w-96 rounded-2xl">
         <div className="flex justify-between items-center px-2 py-2">
           <p className="w-2/3  text-center">Editar Turno</p>
           <button
-            className="w-8 h-8 active:bg-gray-500 rounded-full  "
+            className="w-8 h-8 active:bg-gray-500 rounded-full cursor-pointer "
             onClick={() => {
               onClose(false);
             }}
