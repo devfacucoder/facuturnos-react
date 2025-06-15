@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 const apiUrl = import.meta.env.VITE_API_URL;
+
 const especializaciones = [
   "Clínico general",
   "Pediatra",
@@ -9,8 +10,8 @@ const especializaciones = [
   "Neurólogo",
   "Traumatólogo",
   "Oftalmólogo",
-  "Odontólogo", // Dentista
-  "Otorrinolaringólogo", // Oídos, nariz, garganta
+  "Odontólogo",
+  "Otorrinolaringólogo",
   "Endocrinólogo",
   "Reumatólogo",
   "Urólogo",
@@ -29,43 +30,62 @@ const especializaciones = [
   "Cirujano plástico",
   "Médico del deporte",
 ];
+
 function CrearMedico({ set }) {
+  const [err, setErr] = useState({ active: false, message: "" });
   const [bodyReq, setBodyReq] = useState({
     nombreMedico: "",
     apellidoMedico: "",
     password: "",
     tipoDeMedico: "",
   });
-  const handleCrearMedico = (e) => {
+
+  const handleCrearMedico = async (e) => {
     e.preventDefault();
-    fetch(apiUrl + "/api/medico/agregarmedico", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${localStorage.getItem("token")}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(bodyReq),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.objMedico) {
-          set(data.objMedico); // enviar el nuevo médico al estado padre
-        }
-      })
-      .catch((err) => console.log(err));
+
+    try {
+      const res = await fetch(apiUrl + "/api/medico/agregarmedico", {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bodyReq),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        // Mostrar mensaje de error si la API responde con error
+        throw new Error(data?.message || "Error al crear médico");
+      }
+
+      if (data.objMedico) {
+        set(data.objMedico);
+        setErr({ active: false, message: "" }); // limpiar error si todo salió bien
+      }
+    } catch (error) {
+      setErr({ active: true, message: error.message });
+    }
   };
 
   return (
-    <div className="bg-blue-900 text-white p-6 rounded-lg shadow-lg w-full sm:w-96 max-w-lg mb-8">
+    <div className="bg-blue-900 text-white p-6 rounded-lg shadow-lg w-full ">
       <h3 className="text-xl font-bold mb-4 text-center">
         Registrar Nuevo Médico
       </h3>
+
+      {err.active && (
+        <div className="bg-red-600 text-white p-2 rounded mb-4">
+          {err.message}
+        </div>
+      )}
+
       <form className="flex flex-col gap-4" onSubmit={handleCrearMedico}>
         <div className="flex flex-col">
-          <label htmlFor="nombre" className="mb-1 font-semibold">
-            Nombre
-          </label>
+          <label htmlFor="nombre" className="mb-1 font-semibold">Nombre</label>
           <input
+          required
             id="nombre"
             type="text"
             className="p-2 rounded bg-blue-800 text-white border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -77,10 +97,9 @@ function CrearMedico({ set }) {
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="apellido" className="mb-1 font-semibold">
-            Apellido
-          </label>
+          <label htmlFor="apellido" className="mb-1 font-semibold">Apellido</label>
           <input
+          required
             id="apellido"
             type="text"
             className="p-2 rounded bg-blue-800 text-white border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -95,10 +114,9 @@ function CrearMedico({ set }) {
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="especialidad" className="mb-1 font-semibold">
-            Especialidad
-          </label>
+          <label htmlFor="especialidad" className="mb-1 font-semibold">Especialidad</label>
           <select
+          required
             id="especialidad"
             className="p-2 rounded bg-blue-800 text-white border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
             onChange={(e) => {
@@ -107,16 +125,16 @@ function CrearMedico({ set }) {
           >
             <option value="">Seleccionar especialidad</option>
             {especializaciones.map((e, index) => (
-              <option value={e}>{e}</option>
+              <option key={index} value={e}>{e}</option>
             ))}
           </select>
         </div>
+
         <div className="flex flex-col">
-          <label htmlFor="nombre" className="mb-1 font-semibold">
-            Contraseña
-          </label>
+          <label htmlFor="password" className="mb-1 font-semibold">Contraseña</label>
           <input
-            id="nombre"
+          required
+            id="password"
             type="password"
             className="p-2 rounded bg-blue-800 text-white border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
             placeholder="Ej: Juan123"
@@ -125,6 +143,7 @@ function CrearMedico({ set }) {
             }}
           />
         </div>
+
         <button
           type="submit"
           className="bg-blue-600 hover:bg-blue-700 transition-colors duration-200 font-semibold py-2 px-4 rounded mt-2"
