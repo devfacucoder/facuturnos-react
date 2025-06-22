@@ -30,6 +30,7 @@ const useMedicos = () => {
         return {
           message: data.message || "Error al actualizar el médico",
           statusCode: response.status,
+          objMedico:null,
           error: true,
         };
       }
@@ -79,9 +80,10 @@ const useMedicos = () => {
       if (!res.ok) {
         throw new Error(`Error del servidor: ${res.status}`);
       }
+      const status =  res.status
       const data = await res.json();
 
-      return data;
+      return {data,status};
     } catch (error) {
       console.error("error al obtener la lista de turnos: " + error);
       return [];

@@ -1,101 +1,98 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 const apiUrl = import.meta.env.VITE_API_URL;
-import {useNavigate} from "react-router-dom"
+
 function Login() {
-  const navi = useNavigate()
-  const [logSend, setLogSend] = useState({
-    cod: "",
-    password: "",
-  });
-  const [errLog, setErrLog] = useState(false);
-  const logearse = (e) => {
+  const navigate = useNavigate();
+  const [logSend, setLogSend] = useState({ cod: "", password: "" });
+  const [errLog, setErrLog] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const logearse = async (e) => {
     e.preventDefault();
-    fetch(apiUrl + "/api/auth/login", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(logSend),
-    })
-      .then((res) => {
-        if (res.status == 504) {
-          setErrLog(true);
-          console.log("mal")
-        } else {
-          setErrLog(false);
-          navi("/secretario")
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if(data.token){
-          localStorage.setItem("token",data.token
-            
-          )
-        }
-        cosnole.log(data);
-      })
-      .catch((err) => console.log(err));
+    setLoading(true);
+    setErrLog(null);
+
+    try {
+      const res = await fetch(`${apiUrl}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(logSend),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.token) {
+        setErrLog("Código o contraseña incorrectos.");
+        return;
+      }
+
+      // Guardar token y redirigir
+      localStorage.setItem("token", data.token);
+     localStorage.setItem("loginTime", new Date().toISOString());
+// o
+localStorage.setItem("loginTimestamp", Date.now().toString());
+      navigate("/paneladmin");
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error);
+      setErrLog("Error del servidor. Intente más tarde.");
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
-    <div className="w-full flex justify-center pt-5 px-2">
+    <div className="min-h-screen flex justify-center items-center bg-blue-950 px-4">
       <form
-        className="flex flex-col w-96 bg-blue-600 gap-4 p-4"
         onSubmit={logearse}
+        className="bg-blue-800 p-6 rounded-lg shadow-md w-full max-w-md flex flex-col gap-5 text-white"
       >
-        <div className="flex flex-col items-center">
-          <label
-            htmlFor="inpCod"
-            className="w-5/6 text-start text-sm text-white"
-          >
-            Codigo
-          </label>
+        <h2 className="text-2xl font-bold text-center">Iniciar Sesión</h2>
+
+        <div className="flex flex-col">
+          <label htmlFor="inpCod" className="text-sm mb-1">Código</label>
           <input
             type="text"
-            className="bg-white w-5/6 h-10 text-base px-2 "
             id="inpCod"
-            placeholder="Ingrese su codigo"
+            className="p-2 rounded bg-white text-black"
+            placeholder="Ingrese su código"
             required
-            onChange={(e) => {
-              setLogSend((prev) => ({ ...prev, cod: e.target.value }));
-            }}
+            value={logSend.cod}
+            onChange={(e) =>
+              setLogSend((prev) => ({ ...prev, cod: e.target.value }))
+            }
           />
         </div>
 
-        <div className="flex flex-col items-center">
-          <label
-            htmlFor="inpPass"
-            className="w-5/6 text-start text-sm text-white"
-          >
-            Contraseña
-          </label>
+        <div className="flex flex-col">
+          <label htmlFor="inpPass" className="text-sm mb-1">Contraseña</label>
           <input
-            type="text"
-            required
-            className="bg-white w-5/6 h-10 text-base px-2"
-            placeholder="Ingrese su contraseña"
+            type="password"
             id="inpPass"
-            onChange={(e) => {
-              setLogSend((prev) => ({ ...prev, password: e.target.value }));
-            }}
+            className="p-2 rounded bg-white text-black"
+            placeholder="Ingrese su contraseña"
+            required
+            value={logSend.password}
+            onChange={(e) =>
+              setLogSend((prev) => ({ ...prev, password: e.target.value }))
+            }
           />
         </div>
-        {errLog ? (
-          <div className="w-full flex flex-col items-center">
-            <p className="text-sm text-red-300">
-              codigo o contraseña incorrecto{" "}
-            </p>
-          </div>
-        ) : null}
 
-        <div className="w-full flex flex-col items-center">
-          <button
-            type="submit"
-            className="bg-white w-2/5 text-lg rounded-md font-medium cursor-pointer active:bg-blue-300 active:text-white  "
-          >
-            Ingresar
-          </button>
-        </div>
+        {errLog && (
+          <p className="text-red-300 text-center text-sm">{errLog}</p>
+        )}
+
+        <button
+          type="submit"
+          className="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold py-2 rounded transition"
+          disabled={loading}
+        >
+          {loading ? "Ingresando..." : "Ingresar"}
+        </button>
       </form>
     </div>
   );

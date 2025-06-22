@@ -10,20 +10,17 @@ import Inicio from "./pages/Inicio";
 import ListaMedicos from "./pages/ListaMedicos";
 import PedirTurno from "./pages/PedirTurno";
 import Login from "./pages/Login";
-import PanelSecretario from "./pages/PanelSecretario";
 import PanelAdmin from "./pages/PanelAdmin";
 function App() {
   return (
-    <div className="bg-white min-h-svh w-screen ">
-      <Header />
-      <main>
+    <div className="bg-white flex flex-col min-h-svh w-screen overflow-x-hidden">
+      <main className="w-full">
         <Routes>
           <Route path="/" element={<Inicio />} />
-          <Route path="/ListaMedicos" element={<ListaMedicos />} />
           <Route path="/pedir/:idMedico" element={<PedirTurno />} />
           <Route path="/Login" element={<Login />} />
-          <Route path="/secretario" element={<PanelSecretario />} />
           <Route path="/paneladmin" element={<PanelAdmin />} />
+          <Route path="/ListaMedicos" element={<ListaMedicos/>} />
         </Routes>
       </main>
     </div>

@@ -1,68 +1,32 @@
 import React, { useState, useEffect, createContext } from "react";
 import useMedicos from "../hooks/useMedicos";
-import ModalEdit from "../components/ModalEdit";
-
-import CrearMedico from "../components/CrearMedico";
-import ModalEditMedico from "../components/ModalEditMedico";
 import TablaMedicos from "../components/TablaMedicos";
-export const MedicoContextSelected = createContext();
+import ModalEditMedico from "../components/ModalEditMedico";
+export const mmedicoSelect = createContext();
+export const arrayMedicosCtx = createContext();
+export const handleModalTurnos = createContext();
+
+import ModalTurnos from "../components/Modalturnos";
 function PanelAdmin() {
-  const [medicos, setMedicos] = useState([]);
-  const [turnosVisibles, setTurnosVisibles] = useState({});
-  const { getListaMedicos, getListaTurnos } = useMedicos();
-  const [vieModalEdit, setViewModalEdit] = useState(false);
-  const [vieModalCrearMedico, setVieModalCrearMedico] = useState(false);
-  const [medicoSelect, setMedicoSelect] = useState({});
-
-  const agregarMedico = (nuevoMedico) => {
-    setMedicos((prev) => [...prev, nuevoMedico]);
-  };
-  useEffect(() => {
-    const fetchMedicos = async () => {
-      try {
-        const response = await getListaMedicos();
-        setMedicos(response.listamedicos || []);
-      } catch (error) {
-        console.error("Error al cargar médicos:", error);
-      }
-    };
-    fetchMedicos();
-  }, []);
-
-  const toggleTurnos = async (id) => {
-    if (turnosVisibles[id]) {
-      // Ocultar si ya están visibles
-      setTurnosVisibles((prev) => ({ ...prev, [id]: null }));
-    } else {
-      try {
-        const response = await getListaTurnos(id);
-        setTurnosVisibles((prev) => ({
-          ...prev,
-          [id]: response.objLista || [],
-        }));
-      } catch (error) {
-        console.error("Error al obtener turnos:", error);
-        setTurnosVisibles((prev) => ({ ...prev, [id]: [] }));
-      }
-    }
-  };
-
+  const [stateMedico, setStateMedico] = useState({});
+  const [stateArrayCtx, setStateArrayCtx] = useState([]);
+  const [viewModalTurno, setViewModalTurno] = useState(false);
   return (
-    <MedicoContextSelected.Provider value={[medicoSelect, setMedicoSelect]}>
-      <div className="w-full min-h-screen bg-blue-950">
-        <div className="flex flex-col md:flex-row p-4 gap-2">
-          <div className=" w-full md:w-7/10 h-96">
-            <TablaMedicos
-              pMedicos={medicos}
-              pSetSelectMedico={setMedicoSelect}
-            />
+    <handleModalTurnos.Provider value={[viewModalTurno, setViewModalTurno]}>
+      <arrayMedicosCtx.Provider value={[stateArrayCtx, setStateArrayCtx]}>
+        <mmedicoSelect.Provider value={[stateMedico, setStateMedico]}>
+          <div className="w-full min-h-screen bg-blue-950">
+            <div className="   w-full  flex flex-col gap-2 px-4 sm:flex-row sm:justify-center justify-start items-center  text-white py-6">
+              <TablaMedicos pSetTurnos={setViewModalTurno} />
+              <ModalEditMedico setTurnos={setViewModalTurno} />
+            </div>
+            <div className="px-4">
+              {viewModalTurno ? <ModalTurnos /> : null}
+            </div>
           </div>
-          <div className=" w-full md:w-3/10 max-w-2xl min-h-96 ">
-            <ModalEditMedico medicoStads={medicoSelect} />
-          </div>
-        </div>
-      </div>
-    </MedicoContextSelected.Provider>
+        </mmedicoSelect.Provider>
+      </arrayMedicosCtx.Provider>
+    </handleModalTurnos.Provider>
   );
 }
 /** 

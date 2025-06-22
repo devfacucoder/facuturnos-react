@@ -47,10 +47,10 @@ function PedirTurno() {
   const medicoAMostrar = medico || datosMedico;
 
   return (
-    <div className="w-full">
+    <div className="w-full min-h-screen">
       {medicoAMostrar ? (
-        <div className="w.full flex flex-col justify-center items-center">
-          <div className="w-full  sm:w-1/2 px-4 bg-blue-500 flex flex-col items-center  justify-center">
+        <div className="w-full  flex flex-col justify-center items-center">
+          <div className="w-full  sm:w-1/2 px-4 bg-blue-950 flex flex-col items-center  justify-center">
             <h3 className="text-2xl text-white">
               Dr{" "}
               {medicoAMostrar.nombre +
@@ -75,7 +75,7 @@ function PedirTurno() {
               }
             />
           </div>
-          <div className="w-full sm:w-1/2 flex justify-center ">
+          <div className="w-full sm:w-1/2 flex bg-blue-900 h-1/2 justify-center ">
             <form className="w-4/5  flex flex-col gap-2" onSubmit={handlePedirTurno}>
               <h3>Ingrese sus datos</h3>
               <div className="flex flex-col">
